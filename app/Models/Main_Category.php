@@ -22,4 +22,10 @@ class Main_Category extends Model
         return $query->select('id', 'translation_lang', 'name', 'slug', 'photo', 'active','translation_of');
     }
 
+    public function getActive()
+    {
+       return  $this->active == 1 ? 'مفعل' : 'غير مفعل';
+
+    }
+
 }
