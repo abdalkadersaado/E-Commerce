@@ -47,7 +47,6 @@ Route::group(['namespace' => 'Admin', 'middleware' => 'auth:admin'], function ()
         Route::post('update/{id}','MainCategoriesController@update') -> name('admin.maincategories.update');
         Route::get('delete/{id}','LanguagesController@destroy') -> name('admin.maincategories.delete');
     });
-
         ######################### End Main Categories Routes ########################
 
 

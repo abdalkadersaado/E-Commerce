@@ -8,6 +8,7 @@ use App\Http\Controllers\Controller;
 
 class LoginController extends Controller
 {
+        
     
     public function  getLogin()
     {
@@ -18,9 +19,9 @@ class LoginController extends Controller
     public function save(){
 
         $admin = new App\Models\Admin();
-        $admin ->name ="abd sa";
-        $admin ->email ="abd@gmail.com";
-        $admin ->password = bcrypt("Ahmed Emam");
+        $admin ->name ="abod sa";
+        $admin ->email ="abod@gmail.com";
+        $admin ->password = bcrypt("123456");
         $admin ->save();
 
     }

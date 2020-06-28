@@ -28,4 +28,10 @@ class Main_Category extends Model
 
     }
 
+    public function getPhotoAttribute($val)
+    {
+        return ($val !== null) ? asset('assets/' . $val) : "";
+
+    }
+    
 }
