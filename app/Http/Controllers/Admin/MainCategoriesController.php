@@ -92,12 +92,58 @@ class MainCategoriesController extends Controller
     public function edit($mainCat_id)
     {
 
-           
+        //get specific categories and its translations
+        $mainCategory = Main_Category::with('categories')
+        ->selection()
+        ->find($mainCat_id);
+
+  if (!$mainCategory)
+      return redirect()->route('admin.maincategories')->with(['error' => 'هذا القسم غير موجود ']);
+
+  return view('admin.maincategories.edit', compact('mainCategory'));   
     }
 
     public function update($mainCat_id, MainCategoryRequest $request)
     {
 
+        try {
+            $main_category = Main_Category::find($mainCat_id);
 
+           if (!$main_category)
+               return redirect()->route('admin.maincategories')->with(['error' => 'هذا القسم غير موجود ']);
+
+           // update date
+
+           $category = array_values($request->category) [0];
+
+           if (!$request->has('category.0.active'))
+               $request->request->add(['active' => 0]);
+           else
+               $request->request->add(['active' => 1]);
+
+
+           Main_Category::where('id', $mainCat_id)
+               ->update([
+                   'name' => $category['name'],
+                   'active' => $request->active,
+               ]);
+
+           // save image
+
+           if ($request->has('photo')) 
+           {
+               $filePath = uploadImage('maincategories', $request->photo);
+               Main_Category::where('id', $mainCat_id)
+                   ->update([
+                        'photo' => $filePath,
+                   ]);
+           }
+           return redirect()->route('admin.maincategories')->with(['success' => 'تم ألتحديث بنجاح']);
+       }
+        catch (\Exception $ex) 
+       {
+
+           return redirect()->route('admin.maincategories')->with(['error' => 'حدث خطا ما برجاء المحاوله لاحقا']);
+       }
     }
 }

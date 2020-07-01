@@ -33,5 +33,10 @@ class Main_Category extends Model
         return ($val !== null) ? asset('assets/' . $val) : "";
 
     }
-    
+
+    // relation on same model , using forign key tanslation_of.
+    public function categories()
+    {
+        return $this->hasMany(self::class, 'translation_of');
+    }    
 }
