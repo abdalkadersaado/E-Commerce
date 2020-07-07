@@ -2,12 +2,13 @@
 
 namespace App\Http\Controllers\Admin;
 
+use DB;
+use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use App\Models\Main_Category;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Config;
 use App\Http\Requests\MainCategoryRequest;
-use DB;
 
 class MainCategoriesController extends Controller
 {
@@ -97,10 +98,10 @@ class MainCategoriesController extends Controller
         ->selection()
         ->find($mainCat_id);
 
-  if (!$mainCategory)
-      return redirect()->route('admin.maincategories')->with(['error' => 'هذا القسم غير موجود ']);
+        if (!$mainCategory)
+            return redirect()->route('admin.maincategories')->with(['error' => 'هذا القسم غير موجود ']);
 
-  return view('admin.maincategories.edit', compact('mainCategory'));   
+        return view('admin.maincategories.edit', compact('mainCategory'));   
     }
 
     public function update($mainCat_id, MainCategoryRequest $request)
@@ -146,4 +147,51 @@ class MainCategoriesController extends Controller
            return redirect()->route('admin.maincategories')->with(['error' => 'حدث خطا ما برجاء المحاوله لاحقا']);
        }
     }
+
+    public function destroy($id)
+    {
+
+        try {
+            $maincategory = Main_Category::find($id);
+            if (!$maincategory)
+                return redirect()->route('admin.maincategories')->with(['error' => 'هذا القسم غير موجود ']);
+
+            $vendors = $maincategory->vendors();
+            if (isset($vendors) && $vendors->count() > 0) {
+                return redirect()->route('admin.maincategories')->with(['error' => 'لأ يمكن حذف هذا القسم  ']);
+            }
+
+            $image = Str::after($maincategory->photo, 'assets/');
+
+            $image = base_path('public\assets/' . $image);
+            unlink($image); //delete from folder
+
+            $maincategory->delete();
+            return redirect()->route('admin.maincategories')->with(['success' => 'تم حذف القسم بنجاح']);
+
+        }
+        catch (\Exception $ex) {
+           
+           return redirect()->route('admin.maincategories')->with(['error' => 'حدث خطا ما برجاء المحاوله لاحقا']);
+     }
+    }
+
+    public function changeStatus($id)
+    {
+        try {
+            $maincategory = Main_Category::find($id);
+            if (!$maincategory)
+                return redirect()->route('admin.maincategories')->with(['error' => 'هذا القسم غير موجود ']);
+
+           $status =  $maincategory -> active  == 0 ? 1 : 0;
+
+           $maincategory -> update(['active' =>$status ]);
+
+            return redirect()->route('admin.maincategories')->with(['success' => ' تم تغيير الحالة بنجاح ']);
+
+        } catch (\Exception $ex) {
+            return redirect()->route('admin.maincategories')->with(['error' => 'حدث خطا ما برجاء المحاوله لاحقا']);
+        }
+    }
+
 }

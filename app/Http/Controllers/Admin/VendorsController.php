@@ -69,7 +69,7 @@ class VendorsController extends Controller
         try {
 
             $vendor = Vendor::Selection()->find($id);
-            if (!$vendor)
+            if (!$vendor)     
                 return redirect()->route('admin.vendors')->with(['error' => 'هذا المتجر غير موجود او ربما يكون محذوفا ']);
 
             $categories = Main_Category::where('translation_of', 0)->active()->get();

@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Observers\MainCategoryObserver;
 use Illuminate\Database\Eloquent\Model;
 
 class Main_Category extends Model
@@ -10,6 +11,14 @@ class Main_Category extends Model
     protected $fillable = [
         'translation_lang', 'translation_of', 'name','slug','photo','active','created_at','updated_at',
     ];
+
+
+    protected static function boot()
+    {
+        parent::boot();
+        Main_Category::observe(MainCategoryObserver::class);
+    }
+
 
     public function scopeActive($query)
     {
@@ -42,6 +51,6 @@ class Main_Category extends Model
 
     public function vendors(){
 
-        return $this -> hasMany('App/Models/Vendors','category_id','id');
+        return $this -> hasMany('App\Models\Vendor','category_id','id');
     }
 }
