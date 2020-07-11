@@ -2,14 +2,15 @@
 
 namespace App\Http\Controllers\Admin;
 
+use DB;
+use App\Models\Vendor;
+use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use App\Models\Main_Category;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\VendorRequest;
-use App\Models\Vendor;
-use Illuminate\Support\Facades\Notification;
 use App\Notifications\VendorCreated;
-use DB;
+use Illuminate\Support\Facades\Notification;
 
 
 class VendorsController extends Controller
@@ -130,16 +131,34 @@ class VendorsController extends Controller
         }
         */
     }
+    public function destroy($id)
+    {
 
+        try {
+            $vendor = Vendor::find($id);
+            if (!$vendor)
+                return redirect()->route('admin.vendors')->with(['error' => 'هذا المتجر غير موجود ']);
+
+            $image = Str::after($vendor->logo, 'assets/');
+
+            $image = base_path('public\assets/' . $image);
+            unlink($image); //delete from folder
+
+            $vendor->delete();
+            return redirect()->route('admin.vendors')->with(['success' => 'تم حذف المتجر بنجاح']);
+
+        }
+        catch (\Exception $ex) {
+           
+           return redirect()->route('admin.vendors')->with(['error' => 'حدث خطا ما برجاء المحاوله لاحقا']);
+     }
+    }
     public function changeStatus()
     {
 
     }
 
-    public function destroy()
-    {
-
-    }
+    
 
 
 }
